@@ -14,10 +14,14 @@ app.get("/", async (req, res) => {
 
 app.get("/expenses", async (req, res) => {
   try {
-    let { page = 1, take = 10 } = req.query;
-    take > 10 ? (take = 10) : take;
     const expenses = await fs.readFile("db/expenses.json");
     const parsedExpenses = JSON.parse(expenses);
+
+    let { page = 1, take = 10 } = req.query;
+    take > 10 ? (take = 10) : take;
+    page > parsedExpenses.length / 10
+      ? (page = Math.floor(parsedExpenses.length / 10))
+      : page;
 
     res.status(200).json(parsedExpenses.splice((page - 1) * take, take * page));
   } catch (error) {
