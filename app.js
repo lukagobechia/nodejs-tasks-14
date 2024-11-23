@@ -80,8 +80,7 @@ app.delete("/expenses/:id", async (req, res) => {
       return res.status(404).json({ message: "expense not found", data: null });
     }
 
-    const deletedItem = parsedExpenses;
-    parsedExpenses.splice(index, 1);
+    const deletedItem = parsedExpenses.splice(index, 1);
 
     await fs.writeFile(
       "db/expenses.json",
@@ -89,7 +88,7 @@ app.delete("/expenses/:id", async (req, res) => {
     );
     res
       .status(200)
-      .json({ message: "deleted successfully", data: deletedItem[index] });
+      .json({ message: "deleted successfully", data: deletedItem });
   } catch (error) {
     console.log("Error: ", error.message);
     return res.status(500).json({ message: "error deleting data", data: null });
