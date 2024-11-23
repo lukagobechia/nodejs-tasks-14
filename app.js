@@ -18,12 +18,26 @@ app.get("/expenses", async (req, res) => {
     const parsedExpenses = JSON.parse(expenses);
 
     let { page = 1, take = 10 } = req.query;
-    take > 10 ? (take = 10) : take;
-    page > parsedExpenses.length / 10
-      ? (page = Math.floor(parsedExpenses.length / 10))
-      : page;
 
-    res.status(200).json(parsedExpenses.splice((page - 1) * take, take * page));
+    if (take < 1) {
+      take = 10;
+    } else if (take > 10) {
+      take = 10;
+    }
+
+    const totalPages =
+      parsedExpenses.length === 0
+        ? 1
+        : parsedExpenses.length % take === 0
+        ? parsedExpenses.length / take
+        : Math.floor(parsedExpenses.length / take) + 1;
+
+    if (page < 1) {
+      page = 1;
+    } else if (page > totalPages) {
+      page = totalPages;
+    }
+    res.status(200).json(parsedExpenses.slice((page - 1) * take, take * page));
   } catch (error) {
     console.log("Error: ", error.message);
     return res
